@@ -31,6 +31,14 @@ if ! python3 -c 'import sys; raise SystemExit(sys.version_info < (3, 11))'; then
     exit 1
 fi
 
+PYTHON_ARCH="$(python3 -c 'import platform; print(platform.machine())')"
+if [[ "$PYTHON_ARCH" != "aarch64" ]]; then
+    echo "SolarMonitor benötigt 64-Bit-Python (aarch64), damit Streamlit und PyArrow als fertige Pakete installiert werden können." >&2
+    echo "Aktuelle Python-Architektur: $PYTHON_ARCH" >&2
+    echo "Bitte 64-Bit-Raspberry Pi OS auf einem kompatiblen Pi installieren." >&2
+    exit 1
+fi
+
 echo "Installiere Python-Voraussetzungen..."
 sudo apt-get update
 sudo apt-get install -y python3-venv python3-pip
