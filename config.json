@@ -1,0 +1,18 @@
+{
+    "ip": "192.168.178.160",
+    "port": 30000,
+    "interval": 5,
+    "pv1_divisor": 10.0,
+    "auto_start_logger": true,
+    "auto_refresh": true,
+    "refresh_seconds": 5,
+    "location_name": "Oestrich-Winkel",
+    "latitude": 50.0085,
+    "longitude": 8.0199,
+    "panel_names": {
+        "pv1": "Neben Batterie SO",
+        "pv2": "Kirschbaum SW",
+        "pv3": "Haustur S",
+        "pv4": "Vorderes S"
+    }
+}
