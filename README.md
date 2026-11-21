@@ -6,16 +6,50 @@ Die offizielle Marstek-App zeigt standardmäßig nur die summierte Gesamtleistun
 
 ---
 
-## 🚀 Schnellstart
+## 🚀 Raspberry Pi: Installation und Autostart
 
-Das Dashboard kann direkt per Befehl oder per Doppelklick gestartet werden:
+Auf einem Raspberry Pi mit aktuellem **Raspberry Pi OS (64-Bit)** genügt nach der Ersteinrichtung dieser Befehl. Er klont das Projekt, legt eine virtuelle Python-Umgebung an, installiert alle Pakete und richtet den Autostart ein:
 
 ```bash
+git clone https://github.com/Greg945/SolarMonitor.git && cd SolarMonitor && bash install_pi.sh
+```
+
+Das Dashboard startet danach automatisch bei jedem Einschalten des Pi. Öffne es von einem Gerät im selben Heimnetz unter `http://<IP-Adresse-des-Pi>:8501`. Die IP-Adresse zeigt das Installationsskript am Ende an.
+
+### Updates vom Laptop übernehmen
+
+Wenn du Änderungen auf dem Laptop nach GitHub pushst, lädt der Pi sie beim nächsten Start automatisch. Für ein sofortiges Update ohne Neustart genügt auf dem Pi:
+
+```bash
+sudo systemctl restart solar-monitor
+```
+
+Das Update holt den neuesten Stand des ausgecheckten Branches und installiert geänderte Requirements, bevor die App startet. Einstellungen und Messdaten auf dem Pi bleiben lokal erhalten. App-Einstellungen werden in `config.local.json` gespeichert; die Messdaten liegen in `solar_data.db`.
+
+Nützliche Befehle auf dem Pi:
+
+```bash
+sudo systemctl status solar-monitor
+sudo journalctl -u solar-monitor -f
+```
+
+### Lokal starten
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 streamlit run app.py
 ```
-*Oder einfach per Doppelklick auf [start_dashboard.bat](file:///c:/Users/winde/Documents/GitHub/SolarMonitor/start_dashboard.bat).*
 
-Das Dashboard öffnet sich anschließend automatisch im Browser unter `http://localhost:8501`.
+Unter Windows lässt sich die Umgebung so erstellen:
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+streamlit run app.py
+```
 
 ---
 
@@ -33,7 +67,7 @@ Das Dashboard öffnet sich anschließend automatisch im Browser unter `http://lo
 
 1. **Echte Einzelkanal-Messung & individuelle Panel-Namen**:
    - Zeigt aktuelle Watt-Leistung für alle 4 Eingänge und Gesamt.
-   - Die Namen der Panels können im Tab **⚙️ Einstellungen** frei benannt werden (z. B. *"Neben Batterie"*, *"Richtung Kirschbaum"*, etc.) und werden dauerhaft in `config.json` gesichert.
+   - Die Namen der Panels können im Tab **⚙️ Einstellungen** frei benannt werden (z. B. *"Neben Batterie"*, *"Richtung Kirschbaum"*, etc.) und werden dauerhaft in `config.local.json` gesichert.
    - Berücksichtigt den Firmware-Skalierungsfaktor (z.B. PV1 $\div 10$).
 2. **🏆 Tagessieger & flexibler Zeitraum für Panel-Ertrag & Anteile**:
    - Berechnet über numerische Integration (Trapezregel) den tatsächlichen Energieertrag in **Wattstunden (Wh)** bzw. **Kilowattstunden (kWh)** pro Eingang.
@@ -55,8 +89,8 @@ Das Dashboard öffnet sich anschließend automatisch im Browser unter `http://lo
 5. **Automatischer Logger-Start & eingeklappte Seitenleiste**:
    - Beim Öffnen des Dashboards ist die Seitenleiste standardmäßig **eingeklappt** für eine aufgeräumte Vollbild-Sicht.
    - Der Datenlogger startet beim Aufrufen der Seite **sofort automatisch** im Hintergrund (konfigurierbar).
-6. **Lokale Speicherung & Einstellungen (`config.json` & `solar_data.db`)**:
-   - Alle Einstellungen (IP, Port, Namen, Koordinaten, Intervalle) werden lokal in `config.json` gespeichert.
+6. **Lokale Speicherung & Einstellungen (`config.local.json` & `solar_data.db`)**:
+   - Alle Einstellungen (IP, Port, Namen, Koordinaten, Intervalle) werden lokal in `config.local.json` gespeichert.
    - Messwerte inklusive Umwelt- und Sonnendaten liegen persistent in SQLite (`solar_data.db`).
    - CSV-Download für Excel / Auswertungen.
 5. **Integrierter oder separater Datenlogger**:
@@ -72,9 +106,10 @@ Das Dashboard öffnet sich anschließend automatisch im Browser unter `http://lo
 
 ## 📁 Projektstruktur
 
-- [app.py](file:///c:/Users/winde/Documents/GitHub/SolarMonitor/app.py) – Die Streamlit Webanwendung (Dashboard, Graphen, Metriken)
-- [venus_client.py](file:///c:/Users/winde/Documents/GitHub/SolarMonitor/venus_client.py) – Kommunikation mit der Venus A über das lokale UDP-Protokoll (`PV.GetStatus`)
-- [db.py](file:///c:/Users/winde/Documents/GitHub/SolarMonitor/db.py) – SQLite-Speicherung & Energieberechnungen ($\int P\,dt$)
-- [collector.py](file:///c:/Users/winde/Documents/GitHub/SolarMonitor/collector.py) – Standalone-Hintergrunddienst zum kontinuierlichen Aufzeichnen
-- [generate_demo_data.py](file:///c:/Users/winde/Documents/GitHub/SolarMonitor/generate_demo_data.py) – Testdaten-Generator
-- [marstek.py](file:///c:/Users/winde/Documents/GitHub/SolarMonitor/marstek.py) – Dein ursprüngliches Terminal-Skript
+- `app.py` – Die Streamlit-Webanwendung (Dashboard, Graphen, Metriken)
+- `venus_client.py` – Kommunikation mit der Venus A über das lokale UDP-Protokoll (`PV.GetStatus`)
+- `db.py` – SQLite-Speicherung und Energieberechnungen ($\int P\,dt$)
+- `collector.py` – Standalone-Hintergrunddienst zum kontinuierlichen Aufzeichnen
+- `generate_demo_data.py` – Testdaten-Generator
+- `install_pi.sh` – Einrichtung der virtuellen Umgebung und des systemd-Autostarts auf Raspberry Pi OS
+- `update_pi.sh` – Git- und Requirement-Update vor jedem Dienststart

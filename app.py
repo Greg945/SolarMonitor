@@ -824,7 +824,7 @@ with tab_dashboard:
 # ==============================================================================
 with tab_settings:
     st.header("⚙️ Einstellungen")
-    st.caption("Alle Änderungen werden dauerhaft in der lokalen Datei `config.json` gespeichert.")
+    st.caption("Alle Änderungen werden dauerhaft in der lokalen Datei `config.local.json` gespeichert.")
 
     with st.form("settings_form"):
         # Section 1: Custom Panel Names
@@ -934,7 +934,7 @@ with tab_settings:
                     new_cfg["longitude"]
                 )
 
-            st.success("✅ Einstellungen wurden erfolgreich in `config.json` gespeichert!")
+            st.success("✅ Einstellungen wurden erfolgreich in `config.local.json` gespeichert!")
             time.sleep(0.8)
             st.rerun()
 

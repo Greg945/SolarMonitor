@@ -3,3 +3,6 @@ __pycache__/
 *$py.class
 solar_data.db
 .streamlit/
+config.local.json
+.requirements.sha256
+.venv/

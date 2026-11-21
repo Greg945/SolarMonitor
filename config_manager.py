@@ -1,12 +1,14 @@
 """
 Configuration manager for SolarMonitor.
-Handles persistent settings stored in config.json.
+Handles persistent settings stored in config.local.json.
 """
 
 import json
 import os
 
-CONFIG_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_FILE = os.path.join(PROJECT_DIR, "config.local.json")
+LEGACY_CONFIG_FILE = os.path.join(PROJECT_DIR, "config.json")
 
 DEFAULT_CONFIG = {
     "ip": "192.168.178.160",
@@ -29,10 +31,19 @@ DEFAULT_CONFIG = {
 
 
 def load_config() -> dict:
-    """Loads configuration from config.json, or creates it with defaults."""
+    """Loads local settings, migrating the old tracked config.json if needed."""
     if not os.path.exists(CONFIG_FILE):
-        save_config(DEFAULT_CONFIG)
-        return dict(DEFAULT_CONFIG)
+        if os.path.exists(LEGACY_CONFIG_FILE):
+            try:
+                with open(LEGACY_CONFIG_FILE, "r", encoding="utf-8") as f:
+                    legacy_cfg = json.load(f)
+                if isinstance(legacy_cfg, dict):
+                    save_config(legacy_cfg)
+            except Exception as e:
+                print(f"Error migrating {LEGACY_CONFIG_FILE}: {e}. Using defaults.")
+
+        if not os.path.exists(CONFIG_FILE):
+            save_config(DEFAULT_CONFIG)
 
     try:
         with open(CONFIG_FILE, "r", encoding="utf-8") as f:
@@ -59,12 +70,12 @@ def load_config() -> dict:
 
         return cfg
     except Exception as e:
-        print(f"Error reading config.json: {e}. Using defaults.")
+        print(f"Error reading config.local.json: {e}. Using defaults.")
         return dict(DEFAULT_CONFIG)
 
 
 def save_config(cfg: dict):
-    """Saves configuration dict to config.json."""
+    """Saves configuration dict to config.local.json."""
     with open(CONFIG_FILE, "w", encoding="utf-8") as f:
         json.dump(cfg, f, indent=4, ensure_ascii=False)
 
