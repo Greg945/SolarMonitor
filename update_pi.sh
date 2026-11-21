@@ -22,6 +22,6 @@ if [[ ! -x "$VENV_PYTHON" || "$CURRENT_REQUIREMENTS_HASH" != "$INSTALLED_REQUIRE
         python3 -m venv "$PROJECT_DIR/.venv"
     fi
     "$VENV_PYTHON" -m pip install --upgrade pip
-    "$VENV_PYTHON" -m pip install -r requirements.txt
+    "$VENV_PYTHON" -m pip install --prefer-binary -r requirements.txt
     printf '%s\n' "$CURRENT_REQUIREMENTS_HASH" > "$REQUIREMENTS_HASH_FILE"
 fi

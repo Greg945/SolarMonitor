@@ -38,7 +38,7 @@ sudo apt-get install -y python3-venv python3-pip
 echo "Erstelle virtuelle Umgebung und installiere Pakete..."
 python3 -m venv "$PROJECT_DIR/.venv"
 "$PROJECT_DIR/.venv/bin/python" -m pip install --upgrade pip
-"$PROJECT_DIR/.venv/bin/python" -m pip install -r "$PROJECT_DIR/requirements.txt"
+"$PROJECT_DIR/.venv/bin/python" -m pip install --prefer-binary -r "$PROJECT_DIR/requirements.txt"
 sha256sum "$PROJECT_DIR/requirements.txt" | awk '{print $1}' > "$PROJECT_DIR/.requirements.sha256"
 
 SERVICE_USER="$(id -un)"
