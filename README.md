@@ -8,13 +8,23 @@ Die offizielle Marstek-App zeigt standardmäßig nur die summierte Gesamtleistun
 
 ## 🚀 Raspberry Pi: Installation und Autostart
 
-Auf einem kompatiblen Raspberry Pi mit aktuellem **Raspberry Pi OS (64-Bit)** genügt nach der Ersteinrichtung dieser Befehl. Das Dashboard benötigt 64-Bit-Python (`aarch64`); auf 32-Bit-ARM fehlt ein fertiges PyArrow-Paket für Streamlit. Das Skript prüft die Architektur vor der Installation. Es klont das Projekt, legt eine virtuelle Python-Umgebung an, installiert alle Pakete und richtet den Autostart ein:
+Auf einem kompatiblen Raspberry Pi mit aktuellem **Raspberry Pi OS (64-Bit)** genügt nach der Ersteinrichtung dieser Befehl. Das Dashboard benötigt 64-Bit-Python (`aarch64`); auf 32-Bit-ARM fehlt ein fertiges PyArrow-Paket für Streamlit. Das Skript prüft die Architektur vor der Installation. Es klont das Projekt, legt eine virtuelle Python-Umgebung an, installiert alle Pakete und richtet SolarMonitor sowie Tailscale als Exit-Node für den Autostart ein:
 
 ```bash
 git clone https://github.com/Greg945/SolarMonitor.git && cd SolarMonitor && bash install_pi.sh
 ```
 
-Das Dashboard startet danach automatisch bei jedem Einschalten des Pi. Öffne es von einem Gerät im selben Heimnetz unter `http://<IP-Adresse-des-Pi>:8501`. Die IP-Adresse zeigt das Installationsskript am Ende an.
+Das Dashboard und Tailscale starten danach automatisch bei jedem Einschalten des Pi. Beim ersten Tailscale-Start zeigt das Skript einen Login-Link an. Öffne ihn und melde den Pi bei deinem Tailscale-Konto an. Anschließend musst du den Pi in der Tailscale-Admin-Konsole unter **Machines → Edit route settings → Use as exit node** freigeben. Diese Kontenanmeldung und Freigabe sind einmalig erforderlich.
+
+Öffne das Dashboard im Heimnetz unter `http://<IP-Adresse-des-Pi>:8501`. Für Fernzugriff kannst du danach die Tailscale-IP des Pi verwenden. Die lokale IP-Adresse zeigt das Installationsskript am Ende an.
+
+Wenn SolarMonitor bereits installiert ist und du nur Tailscale ergänzen möchtest:
+
+```bash
+cd SolarMonitor && bash setup_tailscale.sh
+```
+
+Tailscale wird als Systemdienst eingerichtet und verbindet sich nach erfolgreicher einmaliger Anmeldung automatisch nach jedem Neustart wieder mit deinem Tailnet.
 
 ### Updates vom Laptop übernehmen
 

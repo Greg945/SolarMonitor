@@ -73,9 +73,13 @@ EOF
 sudo systemctl daemon-reload
 sudo systemctl enable --now solar-monitor.service
 
+echo
+echo "Installiere und konfiguriere Tailscale als Exit-Node..."
+bash "$PROJECT_DIR/setup_tailscale.sh"
+
 PI_ADDRESS="$(hostname -I | awk '{print $1}')"
 echo
-echo "SolarMonitor ist installiert und startet automatisch beim Booten."
+echo "SolarMonitor und Tailscale starten automatisch beim Booten."
 echo "Dashboard: http://${PI_ADDRESS:-<pi-ip>}:8501"
 echo "Status:     sudo systemctl status solar-monitor"
 echo "Logs:       sudo journalctl -u solar-monitor -f"
